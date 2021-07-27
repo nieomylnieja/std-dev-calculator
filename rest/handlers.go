@@ -39,7 +39,6 @@ func (h RandomHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 func readIntQueryParam(r *http.Request, name string) (int, error) {

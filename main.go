@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,8 +10,11 @@ import (
 	"nobl9-recruitment-task/rest"
 )
 
+const port = 8080
+
 func main() {
 	handler := rest.RandomHandler{Calc: calculator.NewCalculator(random.NewDao())}
 	http.HandleFunc("/random/mean", handler.Handle)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("starting http server at port %d\n", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }

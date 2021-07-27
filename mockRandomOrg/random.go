@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+const port = 8081
+
 // all of this because I was banned by some perf & security tool on random.org
 func main() {
 	http.HandleFunc("/integers", func(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +31,9 @@ func main() {
 		for i := 0; i < num; i++ {
 			_, _ = w.Write([]byte(strconv.Itoa(rand.Intn(max-min)+min) + "\n"))
 		}
-		w.WriteHeader(http.StatusOK)
 	})
-
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	log.Printf("starting http mock-random server at port %d\n", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
 func readIntQueryParam(r *http.Request, name string) (int, error) {
