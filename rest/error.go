@@ -20,5 +20,5 @@ type httpError struct {
 }
 
 func (h httpError) Error() string {
-	return fmt.Sprintf("an HTTP error response has been received from: %s {statusCode=%d, response=%s}", h.Url, h.StatusCode, h.Message)
+	return fmt.Sprintf("http error response has been received from: %s {statusCode=%d, response=%s}", h.Url, h.StatusCode, h.Message)
 }
