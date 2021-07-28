@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"nobl9-recruitment-task/calculator"
-	"nobl9-recruitment-task/logging"
-	"nobl9-recruitment-task/random"
-	"nobl9-recruitment-task/rest"
+	"std-dev-calculator/calculator"
+	"std-dev-calculator/logging"
+	"std-dev-calculator/random"
+	"std-dev-calculator/rest"
 )
 
 const port = 8080

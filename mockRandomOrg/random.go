@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"nobl9-recruitment-task/logging"
+	"std-dev-calculator/logging"
 )
 
 const port = 8081

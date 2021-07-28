@@ -1,4 +1,4 @@
-module nobl9-recruitment-task
+module std-dev-calculator
 
 go 1.16
 

@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-	"nobl9-recruitment-task/logging"
-	"nobl9-recruitment-task/rest"
+	"std-dev-calculator/logging"
+	"std-dev-calculator/rest"
 )
 
 func NewDao() *dao {

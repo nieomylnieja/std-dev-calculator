@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"nobl9-recruitment-task/calculator"
-	"nobl9-recruitment-task/logging"
+	"std-dev-calculator/calculator"
+	"std-dev-calculator/logging"
 )
 
 type stdDevCalculator interface {
