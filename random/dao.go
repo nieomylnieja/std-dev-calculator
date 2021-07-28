@@ -58,6 +58,9 @@ func (d dao) GetIntegers(ctx context.Context, length int) ([]int, error) {
 	req.URL.RawQuery = query.Encode()
 	resp, err := d.client.Do(req)
 	if err != nil {
+		if err.(*url.Error).Timeout() {
+			return nil, rest.NewHttpError(req.URL.Path, "request timed out", http.StatusServiceUnavailable)
+		}
 		return nil, err
 	}
 	raw, err := io.ReadAll(resp.Body)

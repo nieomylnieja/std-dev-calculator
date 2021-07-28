@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"time"
 
@@ -39,20 +38,14 @@ func (h RandomHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	res, err := h.Calc.CalculateStdDev(context.Background(), requests, length)
 	if err != nil {
+		logging.Error(err.Error())
 		// question: should our end api user see the underlying cause of the problem?
 		// I've went with yes: but I was also wondering whether not to log it and return 500 on all occurrences of httpError
 		if hErr, ok := err.(*httpError); ok {
-			logging.Error(hErr.Error())
 			http.Error(w, hErr.Message, hErr.StatusCode)
 			return
 		}
-		// handle context timeout, we can rely on the timeout error message as it's part of the std lib (for now at least...)
-		if ctxErr, ok := err.(*url.Error); ok && ctxErr.Err.Error() == "context deadline exceeded" {
-			logging.Error("%s {url=%s}", ctxErr.Error(), ctxErr.URL)
-			http.Error(w, "request has timed out", http.StatusServiceUnavailable)
-			return
-		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 	if err = json.NewEncoder(w).Encode(res); err != nil {
