@@ -1,6 +1,6 @@
 # Simple REST service in Go
 
-Two envs can be used here:
+Below listed envs can be used here:
 
 - `RANDOM_INTEGERS_GENERATOR_TIMEOUT` with default of `10s` defines a timeout on connection with random generator
   service
@@ -10,4 +10,4 @@ Two envs can be used here:
 
 - `RANDOM_ORG_MOCK_SLEEP` defaults to `0`, this one is really useful for testing timeout handling
 
-To make things easier a Makefile is there to help :)
+To make things easier a `Makefile` is there to help too :)
