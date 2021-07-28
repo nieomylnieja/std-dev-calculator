@@ -56,16 +56,22 @@ func (c calculator) calculateSingleStdDev(ctx context.Context, length int, resul
 }
 
 func (c calculator) stdDev(integers []int) float64 {
-	sum := 0
-	for _, i := range integers {
-		sum += i
+	// convert integers to float64 to ease down calculations a bit
+	floats := make([]float64, len(integers))
+	for i := range integers {
+		floats[i] = float64(integers[i])
 	}
-	mean := sum / len(integers)
-	deviationsSum := 0
-	for _, i := range integers {
-		diff := i - mean
+
+	sum := 0.
+	for f := range floats {
+		sum += floats[f]
+	}
+	mean := sum / float64(len(integers))
+	deviationsSum := 0.
+	for f := range floats {
+		diff := floats[f] - mean
 		deviationsSum += diff * diff
 	}
-	variance := deviationsSum / len(integers)
-	return math.Sqrt(float64(variance))
+	variance := deviationsSum / float64(len(integers))
+	return math.Sqrt(variance)
 }

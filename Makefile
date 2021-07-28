@@ -1,4 +1,4 @@
-APP_NAME = std-deviation-calculator
+APP_NAME = std-dev-calculator
 BUILD_DIR =.build
 
 .PHONY: all verify test build run build-docker run-docker
