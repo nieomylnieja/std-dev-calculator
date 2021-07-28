@@ -1,2 +1,6 @@
 mockRandomOrg
 .build
+.git*
+Dockerfile
+Makefile
+README.md

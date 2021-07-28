@@ -2,18 +2,29 @@ package random
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/kelseyhightower/envconfig"
+	"nobl9-recruitment-task/logging"
+	"nobl9-recruitment-task/rest"
 )
 
 func NewDao() *dao {
+	var config struct {
+		Timeout time.Duration `default:"10s"`
+		Url     string        `required:"true"`
+	}
+	envconfig.MustProcess("RANDOM_INTEGERS_GENERATOR", &config)
+	logging.Info("creating new random generator service dao with URL: %s and timeout: %s", config.Url, config.Timeout.String())
 	return &dao{
-		client: http.Client{},
-		//url:    "https://www.random.org/integers",
-		url: "http://localhost:8081/integers",
+		client:  http.Client{},
+		url:     config.Url,
+		timeout: config.Timeout,
 		predefinedParams: map[string]string{
 			"min":    "1",
 			"max":    "100000",
@@ -28,15 +39,18 @@ func NewDao() *dao {
 type dao struct {
 	client           http.Client
 	url              string
+	timeout          time.Duration
 	predefinedParams map[string]string
 }
 
 func (d dao) GetIntegers(ctx context.Context, length int) ([]int, error) {
+	ctx, cancel := context.WithTimeout(ctx, d.timeout)
+	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, nil)
 	if err != nil {
 		return nil, err
 	}
-	query := req.URL.Query()
+	query := url.Values{}
 	query.Set("num", strconv.Itoa(length))
 	for k, v := range d.predefinedParams {
 		query.Set(k, v)
@@ -51,14 +65,14 @@ func (d dao) GetIntegers(ctx context.Context, length int) ([]int, error) {
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad response from: %s with code: %d and message: %s", d.url, resp.StatusCode, string(raw))
+		return nil, rest.NewHttpError(req.URL.Path, string(raw), resp.StatusCode)
 	}
 	split := strings.Split(strings.TrimSpace(string(raw)), "\n")
 	res := make([]int, len(split))
 	for i := range split {
 		converted, err := strconv.Atoi(split[i])
 		if err != nil {
-			return nil, fmt.Errorf("malformed response from: %s, one of the integers was not an integer at all", d.url)
+			return nil, rest.NewHttpError(req.URL.Path, "malformed response from random generator, one of the integers was not an integer al all", http.StatusInternalServerError)
 		}
 		res[i] = converted
 	}

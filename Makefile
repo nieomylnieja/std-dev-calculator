@@ -20,7 +20,7 @@ build:
 run:
 	$(BUILD_DIR)/$(APP_NAME)
 
-run-mock:
+mock-random-org:
 	cd mockRandomOrg && go build -o ../$(BUILD_DIR)/mockRandom .
 	$(BUILD_DIR)/mockRandom
 

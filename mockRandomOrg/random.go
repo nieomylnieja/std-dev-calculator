@@ -5,14 +5,20 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
+
+	"nobl9-recruitment-task/logging"
 )
 
 const port = 8081
 
 // all of this because I was banned by some perf & security tool on random.org
 func main() {
+	sleepFor := getSleep()
 	http.HandleFunc("/integers", func(w http.ResponseWriter, r *http.Request) {
+		logging.Info("handling request from: %s", r.RequestURI)
 		num, err := readIntQueryParam(r, "num")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -28,11 +34,12 @@ func main() {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		time.Sleep(sleepFor)
 		for i := 0; i < num; i++ {
 			_, _ = w.Write([]byte(strconv.Itoa(rand.Intn(max-min)+min) + "\n"))
 		}
 	})
-	log.Printf("starting http mock-random server at port %d\n", port)
+	logging.Info("starting http mock-random server at port %d with sleep: %s", port, sleepFor.String())
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
@@ -46,4 +53,13 @@ func readIntQueryParam(r *http.Request, name string) (int, error) {
 		return 0, fmt.Errorf("%s query param must be a valid integer", name)
 	}
 	return i, nil
+}
+
+func getSleep() time.Duration {
+	sleepStr := os.Getenv("RANDOM_ORG_MOCK_SLEEP")
+	if sleep, err := time.ParseDuration(sleepStr); err != nil {
+		return 0
+	} else {
+		return sleep
+	}
 }
